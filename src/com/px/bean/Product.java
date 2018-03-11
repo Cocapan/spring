@@ -5,23 +5,29 @@ import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 
-@Component("product")
+//@Component("product")
 public class Product {
 
-    private String name = "iphone6s";
+//    private String name = "iphone6s";
+    private String name;
 
-    private String description = "call,photo,listen music,chat and so on";
+//    private String description = "call,photo,listen music,chat and so on";
+    private String description;
 
     //@Autowired //只有spring配置文件中初始化了一个CateGory对象时，才能正常获取，如果初始化了两个对象，该注解无法识别。
     //@Resource(name="categoryTwo")//如果spring配置文件中初始化了多个对象，可以通过该注解指定引用获取指定的CateGory对象。
     private Category category;
+
+    public Product(){
+        System.out.println("product constructor~~~");
+    }
 
     public Category getCategory() {
         return category;
     }
 
     //@Autowired
-    @Resource(name="category")
+//    @Resource(name="category")
     public void setCategory(Category category) {
         this.category = category;
     }

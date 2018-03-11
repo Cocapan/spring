@@ -2,7 +2,7 @@ package com.px.service;
 
 import org.springframework.stereotype.Component;
 
-@Component("testService")
+//@Component("testService")
 public class TestService {
 
     public void test(){

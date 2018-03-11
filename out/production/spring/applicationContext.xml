@@ -3,7 +3,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:tx="http://www.springframework.org/schema/tx"
-       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:p="http://www.springframework.org/schema/p"
        xsi:schemaLocation="
    http://www.springframework.org/schema/beans
    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
@@ -14,34 +14,69 @@
    http://www.springframework.org/schema/context
    http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 
-    <!-- 该配置表示所有的JavaBean类都放置在base-package所指定的包下    -->
+    <!-- 该配置表示所有的JavaBean类都放置在base-package所指定的包下
     <context:component-scan base-package="com.px.bean" />
     <context:component-scan base-package="com.px.service" />
     <context:component-scan base-package="com.px.aspect" />
     <aop:aspectj-autoproxy/>
-    <!-- annotation-config表示通过注解进行对象注入，通过在JavaBean需要初始化的实例对象上添加注解@Autowired或者@Resource，而不需要第33行的初始化
+    -->
+    <!-- annotation-config表示通过注解进行对象注入，通过在JavaBean需要初始化的实例对象上添加注解@Autowired或者@Resource，而不需要第33行的初始化  -->
     <context:annotation-config />
-     -->
-    <!-- bean标签表示一个JavaBean类，name属性为初始化对象的引用名，class属性为类全限定名，该例中为默认包，所以未加限定包名
-    <bean name="categoryOne" class="com.px.bean.Category">
-     -->
-        <!-- property标签表示初始化JavaBean类中的实例变量，name表示实例变量字段名，注意！！如果该实例变量没有提供set方法将无法进行赋值，value表示实例变量值
+
+<!--
+    &lt;!&ndash; bean标签表示一个JavaBean类，name属性为初始化对象的引用名，class属性为类全限定名，该例中为默认包，所以未加限定包名 &ndash;&gt;
+    <bean name="categoryOne" class="com.px.bean.Category" scope="prototype" init-method="init" destroy-method="destory">
+        &lt;!&ndash; property标签表示初始化JavaBean类中的实例变量，name表示实例变量字段名，注意！！如果该实例变量没有提供set方法将无法进行赋值，value表示实例变量值 &ndash;&gt;
         <property name="name" value="category 1" />
     </bean>
+-->
 
-    <bean name="categoryTwo" class="com.px.bean.Category">
-        <property name="name" value="category 2" />
-    </bean>
+<!--    &lt;!&ndash;    <bean name="category" class="com.px.bean.Category" scope="prototype" init-method="init" destroy-method="destory">
+            &lt;!&ndash; property标签表示初始化JavaBean类中的实例变量，name表示实例变量字段名，注意！！如果该实例变量没有提供set方法将无法进行赋值，value表示实例变量值 &ndash;&gt;
+            <property name="name" value="category 0" />
+        </bean>&ndash;&gt;
 
-    <bean name="product" class="com.px.bean.Product">
+    &lt;!&ndash;    <bean name="categoryTwo" class="com.px.bean.Category">
+            <property name="name" value="category 2" />
+        </bean>&ndash;&gt;
+
+    <bean class="com.px.postprocessor.InitCategory" />
+
+    &lt;!&ndash;    <bean name="product" class="com.px.bean.Product">
+            <property name="name" value="iphone6s" />
+            <property name="description" value="call,photo,listen music,chat and so on" />
+            &lt;!&ndash; 通过指定引用ref初始化JavaBean中实例对象 &ndash;&gt;
+            &lt;!&ndash;<property name="category" ref="categoryTwo" />&ndash;&gt;
+            <property name="category">
+                <bean id="categoryThree" class="com.px.bean.Category"
+                      p:name="category 3"
+                />
+            </property>
+        </bean>&ndash;&gt;
+
+    <bean name="product" class="com.px.bean.Product" autowire="byType">
         <property name="name" value="iphone6s" />
-        <property name="description" value="call,photo,listen music,chat and so on" />-->
-        <!-- 通过指定引用ref初始化JavaBean中实例对象
-        < property name="category" ref="categoryTwo" />
-
+        <property name="description" value="call,photo,listen music,chat and so on" />
     </bean>
 
-    <bean name="productServic" class="com.px.service.ProductService">
+    &lt;!&ndash;<bean name="product" class="com.px.bean.Product"
+          p:name = "iphone6s"
+          p:description="call,photo,listen music,chat and so on"
+          p:category-ref="categoryTwo"
+    />&ndash;&gt;
+
+    <bean name="nameConstructorBean" class="com.px.bean.ConstructorBean">
+        <constructor-arg type="java.lang.String" value="panxuan" />
+        <constructor-arg type="int" value="23" />
+    </bean>
+
+    <bean name="categoryConstructorBean" class="com.px.bean.ConstructorBean" autowire="constructor">
+    </bean>
+
+    <bean name="productTest" class="com.px.bean.TestProduct" parent="product">
+    </bean>
+
+    <bean name="productService" class="com.px.service.ProductService">
     </bean>
     <bean id="loggerAspect" class="com.px.aspect.LoggerAspect"/>
     <aop:config>
@@ -62,5 +97,43 @@
             <aop:around method="runTime" pointcut-ref="performanceCutpoint" />
         </aop:aspect>
     </aop:config>
-        -->
+
+    <bean name="collectionTest" class="com.px.bean.JavaCollection">
+        <property name="categoryList">
+            <list>
+                <ref bean="categoryOne" />
+                &lt;!&ndash;
+                                <ref bean="categoryTwo" />
+                &ndash;&gt;
+                &lt;!&ndash;
+                                <ref bean="categoryThree" />
+                &ndash;&gt;
+            </list>
+        </property>
+        <property name="stringList">
+            <list>
+                <value>a</value>
+                <value>b</value>
+                <value>c</value>
+                <value>a</value>
+            </list>
+        </property>
+        <property name="stringSet">
+            <set>
+                <value>a</value>
+                <value>b</value>
+                <value>c</value>
+                <value>a</value>
+            </set>
+        </property>
+        <property name="stringMap">
+            <map>
+                <entry key="1" value="a" />
+                <entry key="2" value="b" />
+                <entry key="3" value="c" />
+                <entry key="4" value="a" />
+            </map>
+        </property>
+    </bean>-->
+
 </beans>
